@@ -12,7 +12,7 @@ const Login = () => {
       <h1 className="text-center text-[28px] my-5 font-extrabold uppercase tracking-wider">
         Notes
       </h1>
-      <div className="min-w-[40%] h-[70%] m-auto bg-white rounded-[5px] border-[1px] border-gray-300">
+      <div className="w-full max-w-[400px] min-w-[300px] max-h-[90vh] overflow-y-auto m-auto bg-white rounded-[5px] border-[1px] border-gray-300">
         <form className="w-full h-full p-5 flex flex-col">
           <h2 className="text-2xl mb-2 text-center font-bold text-[24px]">
             Login
@@ -46,7 +46,7 @@ const Login = () => {
           >
             Login
           </button>
-          <div className="my-4 flex-col">
+          <div className="my-10 flex-col">
             <div className="w-[11rem] flex m-auto justify-center rounded-sm border-2 hover:border-[2px] hover:border-blue-300">
               <img className="w-8 h-8" src={Google} />
               <span className="bg-blue-500 w-full text-white text-sm rounded-r-sm font-semibold px-1 py-[3px]">
