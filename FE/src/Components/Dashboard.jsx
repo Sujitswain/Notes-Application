@@ -9,7 +9,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdaszbdfjahdfjkshdfjkhsjkfhsjkfhsjdkfhskjskjdfhsjdkhfsjkdhfkjsdhfkjsfhjskhfjksdhfjksdhfjksdhfjkdshfjkshdfjkhsdfjkhsdjkfhsdjkfhsjdkfhkjsdfhkjsdfhjksdfhjkd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 2,
@@ -17,7 +18,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: true
+    isFavorite: true,
+    addedImages: []
   },
   {
     id: 3,
@@ -25,7 +27,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 4,
@@ -33,7 +36,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 5,
@@ -41,7 +45,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: true
+    isFavorite: true,
+    addedImages: []
   },
   {
     id: 6,
@@ -49,7 +54,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 7,
@@ -57,7 +63,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 8,
@@ -65,7 +72,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 9,
@@ -73,7 +81,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 10,
@@ -81,7 +90,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 11,
@@ -89,7 +99,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 12,
@@ -97,7 +108,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
   {
     id: 13,
@@ -105,7 +117,8 @@ const details = [
     notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
     adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
     createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false
+    isFavorite: false,
+    addedImages: []
   },
 ]
 
@@ -119,6 +132,29 @@ const Dashboard = () => {
   
   const [selectedNoteIds, setSelectedNoteIds] = useState([]);
   const [isMultiDeleteMode, setIsMultiDeleteMode] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredNotes = searchTerm.trim()
+  ? notes.filter((note) =>
+      note.heading.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : notes;
+
+  const highlightText = (heading, term) => {
+    if (!term) return heading;
+    const regex = new RegExp(`(${term})`, 'gi');
+    const parts = heading.split(regex);
+    return parts.map((part, index) =>
+      part.toLowerCase() === term.toLowerCase() ? (
+        <span key={index} style={{ color: 'red', fontWeight: 'bold' }}>
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
 
   const openModal = (note) => {
     console.log(note);
@@ -195,6 +231,8 @@ const Dashboard = () => {
               type="text"
               placeholder="Search Notes"
               className="flex-grow h-9 max-w-[50%] min-w-[200px] px-3 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-400 hover:ring-2 hover:ring-blue-400 outline-none"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button
@@ -254,10 +292,10 @@ const Dashboard = () => {
 
         {/* Notes Grid */}
         <div className="flex flex-wrap justify-center gap-2 px-4 pb-4 overflow-y-auto h-[calc(100vh-128px)] scrollbar-hide cursor-pointer">
-          {notes.map((item) => (
+          {filteredNotes.map((item) => (
             <NoteBlock
               key={item.id}
-              heading={item.heading}
+              heading={highlightText(item.heading, searchTerm)}
               notes={item.notes}
               createdAt={item.createdAt}
               onClick={() => openModal(item)}
