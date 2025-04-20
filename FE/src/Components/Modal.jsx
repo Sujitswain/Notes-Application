@@ -12,6 +12,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
   const [images, setImages] = useState(note.addedImages || []);
   const [showCanvas, setShowCanvas] = useState(false);
   const [drawing, setDrawing] = useState(false);
+  const [bgImage, setBgImage] = useState(null);
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const quillRef = useRef(null);
@@ -38,8 +39,18 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
       ctx.lineWidth = 2;
       ctx.lineCap = 'round';
       ctxRef.current = ctx;
+
+      if (bgImage) {
+        const image = new Image();
+        image.onload = () => {
+          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        };
+        image.src = bgImage;
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+      }
     }
-  }, [showCanvas]);
+  }, [showCanvas, bgImage]);
 
   const handleMouseDown = (e) => {
     setDrawing(true);
@@ -77,11 +88,13 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
       }));
       return updatedImages;
     });    
-    setShowCanvas(false); // hide canvas after saving
+    setShowCanvas(false);
+    setBgImage(null);
   };
 
   const handleCanvasCancel = () => {
     setShowCanvas(false);
+    setBgImage(null);
   };
 
   const handleSave = () => {
@@ -114,11 +127,23 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
         const updatedImages = [...prevImages, ...newImagesArray];
         setEditedNote((prevNote) => ({
           ...prevNote,
-          addedImages: updatedImages, // Update addedImages in the edited note
+          addedImages: updatedImages, 
         }));
         return updatedImages;
       });
     });
+  };
+
+  const handleBgImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBgImage(reader.result);
+        setShowCanvas(true);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const modules = {
@@ -136,7 +161,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-5xl max-h-[93vh] overflow-y-auto flex flex-col">
+      <div className="bg-white p-7 rounded-lg shadow-lg w-full max-w-5xl max-h-[93vh] overflow-y-auto flex flex-col">
         <h2 className="text-2xl font-bold mb-4">Edit Note</h2>
 
         <div className="flex flex-col md:flex-row gap-[7px]">
@@ -172,7 +197,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
           </div>
 
           {/* Right Side */}
-          <div className="w-full md:w-1/2 mt-6 min-w-[300px]">
+          <div className="w-full md:w-1/2 h-[425px] mt-6 min-w-[300px]">
             {!showCanvas ? (
               <>
                 <div className="flex justify-between items-center">
@@ -190,7 +215,10 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
                     )}
                   </Dropzone>
                   <button
-                    onClick={() => setShowCanvas(true)}
+                    onClick={() => { 
+                      setShowCanvas(true);
+                      setBgImage(null);
+                    }}
                     className="inline-flex items-center mt-[-20px] gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-indigo-600 hover:to-purple-700 hover:ring-4 hover:ring-purple-300/50"
                   >
                     🎨
@@ -224,14 +252,32 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
                 )}
               </>
             ) : (
-              <div className="relative w-full mt-4 border border-gray-300 rounded-lg">
+              <div className="relative w-full h-[100%] border border-gray-300 rounded-lg">
+                
+                {/* Upload background image input */}
+                <div className="absolute top-3 left-2 z-10">
+                  <label
+                    htmlFor="bgImageUpload"
+                    className="cursor-pointer p-2 rounded-full bg-white border-[0.5px] border-gray-400 hover:bg-gray-100 transition shadow"
+                    title="Upload Background Image"
+                  >
+                    🖼️
+                  </label>
+                  <input
+                    id="bgImageUpload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBgImageUpload}
+                    className="hidden"
+                  />
+                </div>
                 <canvas
                   ref={canvasRef}
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
                   onMouseUp={handleMouseUp}
                   onMouseLeave={handleMouseUp}
-                  className="bg-white w-full h-[400px] rounded-md"
+                  className="bg-white px-4 w-full h-[100%] rounded-md"
                 />
                 <div className="absolute top-2 right-2 flex gap-2">
                   <button
@@ -253,24 +299,24 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-4 mt-[26px] pt-4 border-t border-gray-200">
+        <div className="flex justify-end gap-4 mt-[10px] pt-2 border-t border-gray-200">
           <button
-            className="bg-red-500 text-white px-6 py-2 rounded-md"
+            className="bg-gray-200 text-white px-4 py-2 rounded-md hover:bg-gray-300"
             onClick={handleDelete}
           >
-            Delete
+            🗑️
           </button>
           <button
-            className="bg-gray-300 text-black px-6 py-2 rounded-md"
+            className="bg-red-100 text-black px-4 py-2 rounded-md hover:bg-red-300"
             onClick={onClose}
           >
-            Cancel
+            ❌
           </button>
           <button
-            className="bg-blue-500 text-white px-6 py-2 rounded-md"
+            className="bg-blue-100 text-white px-4 py-2 rounded-md hover:bg-blue-300"
             onClick={handleSave}
           >
-            Save
+            ✔️
           </button>
         </div>
       </div>
