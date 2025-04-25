@@ -8,7 +8,7 @@ import java.util.List;
 public interface NoteService {
 
     NoteResponse createNote(NoteRequest noteRequest);
-    List<NoteResponse> getNotes();
+    List<NoteResponse> getNotes(Long userId);
     NoteResponse getNoteById(Long id);
     NoteResponse updateNote(Long id, NoteRequest noteRequest);
     void deleteNote(Long id);

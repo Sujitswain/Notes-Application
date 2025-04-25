@@ -30,7 +30,7 @@ public class Note {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    @Column(nullable = false)
+    @Column(name = "is_favorite",nullable = false)
     private boolean isFavorite = false;
 
     @CreatedDate
