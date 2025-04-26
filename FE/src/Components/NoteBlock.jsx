@@ -2,7 +2,10 @@ import React from 'react';
 
 const NoteBlock = ({ heading, notes, createdAt, onClick, showCheckbox, isSelected, onSelect, onToggleFavorite, isFavorite }) => {
   return (
-    <div onClick={onClick} className="relative p-2 rounded-md shadow-md w-[320px] h-[190px] flex flex-col justify-between border border-blue-100 transition-all duration-200 hover:border-blue-400">
+    <div 
+      onClick={onClick} 
+      className="relative p-2 rounded-md shadow-md w-[320px] h-[190px] flex flex-col justify-between border border-blue-100 transition-all duration-200 hover:border-blue-400 hover:-translate-y-1 hover:shadow-lg"
+    >
       <div>
         {showCheckbox && (
             <input

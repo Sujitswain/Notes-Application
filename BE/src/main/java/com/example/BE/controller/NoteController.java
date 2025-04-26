@@ -22,12 +22,12 @@ public class NoteController {
     }
 
     @GetMapping("/notes")
-    public ResponseEntity<List<NoteResponse>> getNotes(@RequestParam Long userId) {
+    public ResponseEntity<List<NoteResponse>> getNotes(@RequestParam(name = "userId", required = true) Long userId) {
         return ResponseEntity.ok(noteService.getNotes(userId));
     }
 
-    @GetMapping("/notes/{id}")
-    public ResponseEntity<NoteResponse> getNoteById(@PathVariable Long id) {
+    @GetMapping("/note")
+    public ResponseEntity<NoteResponse> getNoteById(@RequestParam(name = "id", required = true) Long id) {
         return ResponseEntity.ok(noteService.getNoteById(id));
     }
 
@@ -45,6 +45,12 @@ public class NoteController {
     @PutMapping("/notes/{id}/favorite")
     public ResponseEntity<NoteResponse> toggleFavorite(@PathVariable Long id) {
         return ResponseEntity.ok(noteService.toggleFavorite(id));
+    }
+
+    @DeleteMapping("/notes/{noteId}/images/{imageId}")
+    public ResponseEntity<Void> deleteImage(@PathVariable Long noteId, @PathVariable Long imageId) {
+        noteService.deleteImage(noteId, imageId);
+        return ResponseEntity.noContent().build();
     }
 
 }

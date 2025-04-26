@@ -60,14 +60,17 @@ public class NoteServiceImpl implements NoteService {
         note.setFavorite(request.getIsFavorite());
 
         // Optionally handle updating base64 images
-        if (request.getBase64Images() != null && !request.getBase64Images().isEmpty()) {
-            List<NoteImage> images = request.getBase64Images().stream()
+        if (request.getBase64Images() != null && !request.getBase64Images().isEmpty()) {        // Clear old images
+            note.getImages().clear();
+
+            List<NoteImage> newImages = request.getBase64Images().stream()
                     .map(base64 -> NoteImage.builder()
                             .imageData(base64)
                             .note(note)
                             .build())
-                    .collect(Collectors.toList());
-            note.setImages(images);
+                    .toList();
+
+            note.getImages().addAll(newImages);
         }
 
         Note updatedNote = noteRepository.save(note);
@@ -86,5 +89,21 @@ public class NoteServiceImpl implements NoteService {
 
         Note updatedNote = noteRepository.save(note);
         return NoteMapper.toDto(updatedNote);
+    }
+
+    @Override
+    public void deleteImage(Long noteId, Long imageId) {
+        Note note = noteRepository.findById(noteId)
+                .orElseThrow(() -> new EntityNotFoundException("Note not found"));
+
+        // Find the image in the note's images
+        NoteImage image = note.getImages().stream()
+                .filter(img -> img.getId().equals(imageId))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Image not found"));
+
+        note.getImages().remove(image);
+        noteImageRepository.delete(image);
+        noteRepository.save(note);
     }
 }

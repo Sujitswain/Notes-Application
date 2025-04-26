@@ -13,5 +13,5 @@ public interface NoteService {
     NoteResponse updateNote(Long id, NoteRequest noteRequest);
     void deleteNote(Long id);
     NoteResponse toggleFavorite(Long id);
-
+    void deleteImage(Long noteId, Long imageId);
 }

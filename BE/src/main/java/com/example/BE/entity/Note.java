@@ -23,11 +23,12 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
     private long id;
 
     private String heading;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String notes;
 
     @Column(name = "is_favorite",nullable = false)

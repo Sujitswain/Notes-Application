@@ -1,224 +1,31 @@
 import React, { useState } from 'react'
 import NoteBlock from './NoteBlock';
 import Modal from './Modal';
+import { useGlobalContext } from '../context/GlobalContext';
 
-const details = [
-  {
-    id: 1,
-    heading: "Taking Notes for ReactJS", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdaszbdfjahdfjkshdfjkhsjkfhsjkfhsjdkfhskjskjdfhsjdkhfsjkdhfkjsdhfkjsfhjskhfjksdhfjksdhfjksdhfjkdshfjkshdfjkhsdfjkhsdjkfhsdjkfhsjdkfhkjsdfhkjsdfhjksdfhjkd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 2,
-    heading: "Taking Notes for Java", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: true,
-    addedImages: []
-  },
-  {
-    id: 3,
-    heading: "Taking Notes for JavaScript", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 4,
-    heading: "Taking Notes for Python", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 5,
-    heading: "Taking Notes for MySQL", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: true,
-    addedImages: []
-  },
-  {
-    id: 6,
-    heading: "Taking Notes for Docker", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 7,
-    heading: "Taking Notes for Kubernetes", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 8,
-    heading: "Taking Notes for Kubernetes", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 9,
-    heading: "Taking Notes for Kubernetes", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 10,
-    heading: "Taking Notes for Kubernetes", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 11,
-    heading: "Taking Notes for Kubernetes", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 12,
-    heading: "Taking Notes for Kubernetes", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-  {
-    id: 13,
-    heading: "Taking Notes for Kubernetes", 
-    notes: "sdjahsdjhajdhajdshjashdjhadjhasjdhajsdhhhhhhhhhasadasasdadasdasddddddddddddddddddddddddddddddddddddddddddadadasdas\
-    adasdadasdasdadasdasdadadasdasdasdasdasdasdasdasdadfwfeadsfsdasdasdasdasdadadasdasd",
-    createdAt: "18-04-2025 14:30 PM",
-    isFavorite: false,
-    addedImages: []
-  },
-]
 
 const Dashboard = () => {
   
-  const [notes, setNotes] = useState(() => 
-    [...details].sort((a, b) => b.isFavorite - a.isFavorite)
-  );  
-  const [selectedNote, setSelectedNote] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    selectedNote,
+    isModalOpen,
+    selectedNoteIds,
+    isMultiDeleteMode,
+    searchTerm,
+    filteredNotes,
+    highlightText,
+    openModal,
+    closeModal,
+    toggleFavorite,
+    handleSaveNote,
+    handleAddNote,
+    handleDeleteNote,
+    toggleMultiDeleteMode,
+    toggleSelectNote,
+    handleMultiDelete,
+    setSearchTerm
+  } = useGlobalContext();
   
-  const [selectedNoteIds, setSelectedNoteIds] = useState([]);
-  const [isMultiDeleteMode, setIsMultiDeleteMode] = useState(false);
-
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredNotes = searchTerm.trim()
-  ? notes.filter((note) =>
-      note.heading.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  : notes;
-
-  const highlightText = (heading, term) => {
-    if (!term) return heading;
-    const regex = new RegExp(`(${term})`, 'gi');
-    const parts = heading.split(regex);
-    return parts.map((part, index) =>
-      part.toLowerCase() === term.toLowerCase() ? (
-        <span key={index} style={{ color: 'red', fontWeight: 'bold' }}>
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
-  const openModal = (note) => {
-    console.log(note);
-    setSelectedNote(note);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedNote(null);
-  };
-
-  const toggleFavorite = (id) => {
-    const updatedNotes = notes.map((note) =>
-      note.id === id ? { ...note, isFavorite: !note.isFavorite } : note
-    );
-
-    updatedNotes.sort((a, b) => b.isFavorite - a.isFavorite);
-
-    setNotes(updatedNotes);
-  };
-
-  const handleSaveNote = (updatedNote) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === updatedNote.id ? updatedNote : note
-      )
-    );
-  };
-
-  const handleAddNote = () => {
-    const newNote = {
-      id: Date.now(),
-      heading: "New Note",
-      notes: "",
-      createdAt: new Date().toLocaleString(),
-    };
-    setNotes([newNote, ...notes]);
-    openModal(newNote);
-  };
-  
-  const handleDeleteNote = (noteId) => {
-    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
-  };  
-
-  const toggleMultiDeleteMode = () => {
-    setIsMultiDeleteMode((prev) => !prev);
-    setSelectedNoteIds([]);
-  };
-
-  const toggleSelectNote = (noteId) => {
-    setSelectedNoteIds((prev) =>
-      prev.includes(noteId)
-        ? prev.filter((id) => id !== noteId)
-        : [...prev, noteId]
-    );
-  };
-  
-  const handleMultiDelete = () => {
-    setNotes((prevNotes) => prevNotes.filter((note) => !selectedNoteIds.includes(note.id)));
-    setSelectedNoteIds([]);
-    setIsMultiDeleteMode(false);
-  };
-    
   return (
     <div className="w-full min-h-screen flex justify-center bg-gray-100">
       <div className="w-full max-w-[1200px] min-w-[320px] flex flex-col bg-white shadow-xl border border-gray-300">
@@ -244,7 +51,7 @@ const Dashboard = () => {
 
         {/* Greeting and Add Note Button */}
         <div className="px-4 py-4 flex justify-between items-start sm:items-center">
-          <p className="text-2xl font-bold text-blue-600">
+          <p className="text-2xl font-bold text-blue-600 bg-slate-200">
             Hey, <span className="text-black">Test</span>
           </p>
           <div className="flex items-center gap-3">
@@ -290,8 +97,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Notes Grid */}
-        <div className="flex flex-wrap justify-center gap-2 px-4 pb-4 overflow-y-auto h-[calc(100vh-128px)] scrollbar-hide cursor-pointer">
+        <div className="flex flex-wrap justify-center py-1 gap-2 px-4 pb-4 overflow-y-auto h-[calc(100vh-128px)] scrollbar-hide cursor-pointer">
           {filteredNotes.map((item) => (
             <NoteBlock
               key={item.id}
@@ -309,7 +115,6 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Modal for editing notes */}
       {isModalOpen && (
         <Modal
           isOpen={isModalOpen}

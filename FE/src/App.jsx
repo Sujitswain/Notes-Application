@@ -5,16 +5,20 @@ import Index from "./Components/Index";
 import Login from "./Components/Login";
 import Dashboard from "./Components/Dashboard";
 
+import { GlobalProvider } from "./context/GlobalContext";
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <div className="flex justify-center w-full h-screen">
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <GlobalProvider>
+      <BrowserRouter>
+        <div className="flex justify-center w-full h-screen">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </GlobalProvider>
   );
 }

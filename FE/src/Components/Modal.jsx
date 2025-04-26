@@ -13,6 +13,8 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
   const [showCanvas, setShowCanvas] = useState(false);
   const [drawing, setDrawing] = useState(false);
   const [bgImage, setBgImage] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const quillRef = useRef(null);
@@ -80,6 +82,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
       id: Date.now(),
       base64: dataUrl,
     };
+
     setImages((prevImages) => {
       const updatedImages = [...prevImages, newImage];
       setEditedNote((prevNote) => ({
@@ -145,6 +148,15 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
       reader.readAsDataURL(file);
     }
   };
+
+  const handleImageDelete = (id) => {
+    const updatedImages = images.filter((img) => img.id !== id);
+    setImages(updatedImages);
+    setEditedNote((prevNote) => ({
+      ...prevNote,
+      addedImages: updatedImages,
+    }));
+  };  
 
   const modules = {
     toolbar: [
@@ -227,27 +239,52 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
 
                 {/* Image slider */}
                 {images.length > 0 && (
-                  <div className="mt-4 relative w-full">
-                    <Slider
-                      dots={true}
-                      infinite={false}
-                      speed={500}
-                      slidesToShow={1}
-                      slidesToScroll={1}
-                      vertical={false}
-                    >
-                      {images.map((image, index) => (
-                        <div key={image.id} className="flex justify-center">
-                          <div className="w-full h-64 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
-                            <img
-                              src={image.base64}
-                              alt={`Image ${index + 1}`}
-                              className="max-h-full max-w-full object-contain"
-                            />
+                  <div className="mt-4 w-full relative">
+                    {images.length > 0 && (
+                      <Slider
+                        dots={true}
+                        infinite={false}
+                        speed={500}
+                        slidesToShow={1}
+                        slidesToScroll={1}
+                        vertical={false}
+                        afterChange={(index) => setCurrentImageIndex(index)}
+                      >
+                        {images.map((image, index) => (
+                          <div key={image.id} className="relative w-full flex items-center justify-center">
+
+                            <button
+                              onClick={() => handleImageDelete(image.id)}
+                              className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 z-10"
+                              title="Delete Image"
+                            >
+                              🗑️
+                            </button>
+
+                            {index === currentImageIndex && (
+                              <button
+                                onClick={() => {
+                                  setBgImage(images[currentImageIndex].base64);
+                                  setShowCanvas(true);
+                                }}
+                                className="absolute top-2 right-12 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 z-10"
+                                title="Scribble on Image"
+                              >
+                                🖌️
+                              </button>
+                            )}
+                                              
+                            <div className="w-full h-64 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
+                              <img
+                                src={image.base64}
+                                alt={`Image ${index + 1}`}
+                                className="max-h-full max-w-full object-contain"
+                              />
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </Slider>
+                        ))}
+                      </Slider>
+                    )}
                   </div>
                 )}
               </>
