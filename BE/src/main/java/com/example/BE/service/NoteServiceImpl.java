@@ -38,7 +38,6 @@ public class NoteServiceImpl implements NoteService {
     public List<NoteResponse> getNotes(Long userId) {
         List<Note> notes = noteRepository.findByUser_Id(userId);
 
-        // Convert to DTOs
         return notes.stream()
                 .map(NoteMapper::toDto)
                 .collect(Collectors.toList());
@@ -48,33 +47,31 @@ public class NoteServiceImpl implements NoteService {
     public NoteResponse getNoteById(Long id) {
         Note note = noteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Note not found"));
 
-        // Convert Note entity to NoteResponse DTO
         return NoteMapper.toDto(note);
     }
 
     @Override
     public NoteResponse updateNote(Long id, NoteRequest request) {
         Note note = noteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Note not found"));
+
         note.setHeading(request.getHeading());
         note.setNotes(request.getNotes());
-        note.setFavorite(request.getIsFavorite());
 
-        // Optionally handle updating base64 images
-        if (request.getBase64Images() != null && !request.getBase64Images().isEmpty()) {        // Clear old images
-            note.getImages().clear();
+        note.getImages().clear();
 
-            List<NoteImage> newImages = request.getBase64Images().stream()
-                    .map(base64 -> NoteImage.builder()
-                            .imageData(base64)
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            List<NoteImage> images = request.getImages().stream()
+                    .map(item -> NoteImage.builder()
+                            .id(item.getId())
+                            .base64(item.getBase64())
                             .note(note)
                             .build())
                     .toList();
-
-            note.getImages().addAll(newImages);
+            note.getImages().addAll(images);
         }
 
-        Note updatedNote = noteRepository.save(note);
-        return NoteMapper.toDto(updatedNote);
+        Note updatedNode = noteRepository.save(note);
+        return NoteMapper.toDto(updatedNode);
     }
 
     @Override
@@ -105,5 +102,15 @@ public class NoteServiceImpl implements NoteService {
         note.getImages().remove(image);
         noteImageRepository.delete(image);
         noteRepository.save(note);
+    }
+
+    @Override
+    public void deleteMultipleNotes(List<Long> ids) {
+        List<Note> notes = noteRepository.findAllById(ids);
+        if(notes.isEmpty()) {
+            throw new EntityNotFoundException("Notes not found");
+        }
+
+        noteRepository.deleteAll(notes);
     }
 }

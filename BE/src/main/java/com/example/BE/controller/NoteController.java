@@ -42,6 +42,12 @@ public class NoteController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/notes/bulk-delete")
+    public ResponseEntity<Void> deleteMultipleNotes(@RequestBody List<Long> ids) {
+        noteService.deleteMultipleNotes(ids);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/notes/{id}/favorite")
     public ResponseEntity<NoteResponse> toggleFavorite(@PathVariable Long id) {
         return ResponseEntity.ok(noteService.toggleFavorite(id));

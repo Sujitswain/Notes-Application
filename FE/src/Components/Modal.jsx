@@ -9,7 +9,7 @@ import 'slick-carousel/slick/slick-theme.css';
 const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
 
   const [editedNote, setEditedNote] = useState({ ...note });
-  const [images, setImages] = useState(note.addedImages || []);
+  const [images, setImages] = useState(note.images || []);
   const [showCanvas, setShowCanvas] = useState(false);
   const [drawing, setDrawing] = useState(false);
   const [bgImage, setBgImage] = useState(null);
@@ -22,11 +22,13 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
   useEffect(() => {
     if (note) {
       setEditedNote({
-        id: note.id,
+        noteId: note.noteId,
+        userId: note.userId,
         heading: note.heading,
         notes: note.notes,
-        createdAt: note.createdAt,
-        addedImages: note.addedImages || [],
+        createdAt: Date.now(),
+        images: note.images || [],
+        isFavorite: note.isFavorite
       });
     }
   }, [note]);
@@ -79,7 +81,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
     const canvas = canvasRef.current;
     const dataUrl = canvas.toDataURL('image/png');
     const newImage = {
-      id: Date.now(),
+      id: Date.now().toString(),
       base64: dataUrl,
     };
 
@@ -87,7 +89,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
       const updatedImages = [...prevImages, newImage];
       setEditedNote((prevNote) => ({
         ...prevNote,
-        addedImages: updatedImages,
+        images: updatedImages,
       }));
       return updatedImages;
     });    
@@ -106,7 +108,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
   };
 
   const handleDelete = () => {
-    onDelete(editedNote.id);
+    onDelete(editedNote.noteId);
     onClose();
   };
 
@@ -130,7 +132,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
         const updatedImages = [...prevImages, ...newImagesArray];
         setEditedNote((prevNote) => ({
           ...prevNote,
-          addedImages: updatedImages, 
+          images: updatedImages, 
         }));
         return updatedImages;
       });
@@ -154,7 +156,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
     setImages(updatedImages);
     setEditedNote((prevNote) => ({
       ...prevNote,
-      addedImages: updatedImages,
+      images: updatedImages,
     }));
   };  
 
@@ -337,12 +339,12 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
 
         {/* Footer */}
         <div className="flex justify-end gap-4 mt-[10px] pt-2 border-t border-gray-200">
-          <button
+          {editedNote.noteId && (<button
             className="bg-gray-200 text-white px-4 py-2 rounded-md hover:bg-gray-300"
             onClick={handleDelete}
           >
             🗑️
-          </button>
+          </button>)}
           <button
             className="bg-red-100 text-black px-4 py-2 rounded-md hover:bg-red-300"
             onClick={onClose}

@@ -51,7 +51,7 @@ const Dashboard = () => {
 
         {/* Greeting and Add Note Button */}
         <div className="px-4 py-4 flex justify-between items-start sm:items-center">
-          <p className="text-2xl font-bold text-blue-600 bg-slate-200">
+          <p className="text-2xl font-bold text-blue-600">
             Hey, <span className="text-black">Test</span>
           </p>
           <div className="flex items-center gap-3">
@@ -100,15 +100,15 @@ const Dashboard = () => {
         <div className="flex flex-wrap justify-center py-1 gap-2 px-4 pb-4 overflow-y-auto h-[calc(100vh-128px)] scrollbar-hide cursor-pointer">
           {filteredNotes.map((item) => (
             <NoteBlock
-              key={item.id}
+              key={item.noteId}
               heading={highlightText(item.heading, searchTerm)}
               notes={item.notes}
               createdAt={item.createdAt}
               onClick={() => openModal(item)}
               showCheckbox={isMultiDeleteMode}
-              isSelected={selectedNoteIds.includes(item.id)}
-              onSelect={() => toggleSelectNote(item.id)}
-              onToggleFavorite={() => toggleFavorite(item.id)}
+              isSelected={selectedNoteIds.includes(item.noteId)}
+              onSelect={() => toggleSelectNote(item.noteId)}
+              onToggleFavorite={() => toggleFavorite(item.noteId)}
               isFavorite={item.isFavorite}
             />
           ))}
