@@ -1,4 +1,4 @@
-package com.example.BE.service;
+package com.example.BE.service.Impl;
 
 import com.example.BE.dto.NoteRequest;
 import com.example.BE.dto.NoteResponse;
@@ -9,6 +9,7 @@ import com.example.BE.mapper.NoteMapper;
 import com.example.BE.repository.NoteImageRepository;
 import com.example.BE.repository.NoteRepository;
 import com.example.BE.repository.UserRepository;
+import com.example.BE.service.NoteService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,12 @@
 import React from "react";
 import ReactLogo from "../assets/react.svg";
 import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+
+  const navigate = useNavigate();
+
   return (
     <div className="w-[80%] ">
       <Navbar />
@@ -17,10 +21,10 @@ const Index = () => {
               ideas, and inspirations in real-time.
             </p>
             <div>
-              <button className="bg-blue-300 text-blue-700 font-[600] mr-3 px-4 py-[4px] rounded-md hover:bg-blue-400 hover:text-blue-700 hover:border-b-2 hover:border-blue-500">
+              <button onClick={() => navigate('/login')} className="bg-blue-300 text-blue-700 font-[600] mr-3 px-4 py-[4px] rounded-md hover:bg-blue-400 hover:text-blue-700 hover:border-b-2 hover:border-blue-500">
                 Login
               </button>
-              <button className="bg-green-300 text-green-700 font-[600] px-4 py-[4px] rounded-md hover:bg-green-400 hover:text-green-700 hover:border-b-2 hover:border-green-500">
+              <button onClick={() => navigate('/register')} className="bg-green-300 text-green-700 font-[600] px-4 py-[4px] rounded-md hover:bg-green-400 hover:text-green-700 hover:border-b-2 hover:border-green-500">
                 Register
               </button>
             </div>

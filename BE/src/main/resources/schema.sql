@@ -1,8 +1,12 @@
 CREATE TABLE users (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    is_verified BOOLEAN DEFAULT FALSE,
+    otp_code VARCHAR(255),
+    otp_expiry DATETIME,
+    CONSTRAINT unique_email UNIQUE (email)
 );
 
 CREATE TABLE notes (
@@ -25,3 +29,20 @@ CREATE TABLE note_image (
     PRIMARY KEY (id),
     FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
 );
+
+
+-- INSERT INTO users (id, username, email, password) VALUES
+-- (1, 'alice', 'alice@example.com', 'pass123'),
+-- (2, 'bob', 'bob@example.com', 'pass456');
+--
+--
+-- INSERT INTO notes (id, user_id, heading, notes, is_favorite, created_at, updated_at) VALUES
+-- (1, 1, 'Groceries', 'Buy milk and eggs', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+-- (2, 1, 'Workout', 'Morning run and gym', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+-- (3, 2, 'Books to read', 'Sapiens, Atomic Habits', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+--
+--
+--
+-- INSERT INTO note_images (note_id, image_data, file_type) VALUES
+-- (1, 'base64-image-data-1', 'image/png'),
+-- (2, 'base64-image-data-2', 'image/jpeg');

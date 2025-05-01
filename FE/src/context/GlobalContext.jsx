@@ -9,7 +9,7 @@ export const useGlobalContext = () => {
 
 export const GlobalProvider = ({ children }) => {
   
-  const [userId, setUserId] = useState(1);
+  const [user, setUser] = useState(null);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +18,9 @@ export const GlobalProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/notes`, { params: { userId } })
+    if (!user) return;
+
+    axios.get(`http://localhost:8080/api/notes`, { params: { userId: user?.id } })
       .then(response => {
         const sortedNotes = [...response.data].sort((a, b) => b.isFavorite - a.isFavorite);
         setNotes(sortedNotes);
@@ -26,7 +28,7 @@ export const GlobalProvider = ({ children }) => {
       .catch(error => {
         console.error('Error fetching notes:', error);
       });
-  }, [userId]);
+  }, [user]);
 
   const filteredNotes = useMemo(() => {
     return searchTerm.trim()
@@ -130,7 +132,6 @@ export const GlobalProvider = ({ children }) => {
     }
   };
   
-
   const toggleMultiDeleteMode = () => {
     setIsMultiDeleteMode((prev) => !prev);
     setSelectedNoteIds([]);
@@ -163,6 +164,7 @@ export const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
+        user,
         selectedNote,
         isModalOpen,
         selectedNoteIds,

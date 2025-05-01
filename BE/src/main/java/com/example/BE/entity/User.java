@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -28,6 +29,12 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    private boolean isVerified = false;
+
+    private String otpCode;
+
+    private LocalDateTime otpExpiry;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes;
