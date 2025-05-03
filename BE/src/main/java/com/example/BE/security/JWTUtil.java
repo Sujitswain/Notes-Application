@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JWTUtil {
@@ -15,8 +17,14 @@ public class JWTUtil {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    public String generateToken(String email) {
+    public String generateToken(String userName, String email) {
+
+        Map<String, String> claims = new HashMap<>();
+        claims.put("username", userName);
+        claims.put("email", email);
+
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour

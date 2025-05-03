@@ -39,15 +39,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            System.out.println("JWT exists, trying to authenticate the user: " + email);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             if (jwtUtil.isTokenValid(jwt, userDetails)) {
+                System.out.println("Token is valid, setting authentication context");
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                System.out.println("Invalid JWT token.");
             }
+        } else {
+            System.out.println("No JWT token or user is already authenticated.");
         }
 
         filterChain.doFilter(request, response);

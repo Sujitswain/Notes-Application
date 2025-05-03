@@ -1,9 +1,6 @@
 package com.example.BE.controller;
 
-import com.example.BE.dto.AuthRequest;
-import com.example.BE.dto.AuthResponse;
-import com.example.BE.dto.OtpVerificationRequest;
-import com.example.BE.dto.RegisterRequest;
+import com.example.BE.dto.*;
 import com.example.BE.security.CustomUserDetailsService;
 import com.example.BE.security.JWTUtil;
 import com.example.BE.service.Impl.UserServiceImpl;
@@ -38,14 +35,22 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+
+            System.out.println("Trying login for email: " + request.getEmail());
+            System.out.println("Raw password: " + request.getPassword());
+
+            Authentication authentication =
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
 
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getEmail());
-            final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+            CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+            final String jwt = jwtUtil.generateToken(
+                    customUserDetails.getUsername(), customUserDetails.getEmail()
+            );
 
-            return ResponseEntity.ok(new AuthResponse(jwt, request.getEmail()));
+            return ResponseEntity.ok(new AuthResponse(jwt, customUserDetails.getEmail(), customUserDetails.getUsername()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }

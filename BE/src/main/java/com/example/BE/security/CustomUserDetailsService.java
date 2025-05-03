@@ -1,5 +1,6 @@
 package com.example.BE.security;
 
+import com.example.BE.dto.CustomUserDetails;
 import com.example.BE.entity.User;
 import com.example.BE.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found Exception"));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                new ArrayList<>()
-        );
+        if (!user.isVerified()) {
+            throw new UsernameNotFoundException("User not verified. Please verify your email.");
+        }
+
+        return new CustomUserDetails(user);
     }
 }

@@ -20,7 +20,16 @@ export const GlobalProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
-    axios.get(`http://localhost:8080/api/notes`, { params: { userId: user?.id } })
+    const token = localStorage.getItem("token");
+    console.log("Token: " + token);
+
+    axios.get(`http://localhost:8080/api/notes`, { 
+      params: { userId: 1 },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true
+    })
       .then(response => {
         const sortedNotes = [...response.data].sort((a, b) => b.isFavorite - a.isFavorite);
         setNotes(sortedNotes);
@@ -165,6 +174,7 @@ export const GlobalProvider = ({ children }) => {
     <GlobalContext.Provider
       value={{
         user,
+        setUser,
         selectedNote,
         isModalOpen,
         selectedNoteIds,
