@@ -33,6 +33,10 @@ public class JWTUtil {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
+
+        System.out.println("Extract: " + extractUsername(token));
+        System.out.println("User Details: " + userDetails.getUsername());
+
         return extractUsername(token).equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 

@@ -45,7 +45,6 @@ public class NoteMapper {
 
         NoteResponse response = new NoteResponse();
         response.setNoteId(note.getId());
-        response.setUserId(note.getUser().getId());
         response.setHeading(note.getHeading());
         response.setNotes(note.getNotes());
         response.setImages(imageList);

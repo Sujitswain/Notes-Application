@@ -1,6 +1,5 @@
 package com.example.BE.dto;
 
-
 import com.example.BE.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,13 +21,17 @@ public class CustomUserDetails implements UserDetails {
         this.authorities = new ArrayList<>();
     }
 
+    public String getActualUsername() {
+        return username;
+    }
+
     public String getEmail() {
         return email;
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

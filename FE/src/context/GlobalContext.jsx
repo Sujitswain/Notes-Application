@@ -21,10 +21,8 @@ export const GlobalProvider = ({ children }) => {
     if (!user) return;
 
     const token = localStorage.getItem("token");
-    console.log("Token: " + token);
 
     axios.get(`http://localhost:8080/api/notes`, { 
-      params: { userId: 1 },
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -74,7 +72,19 @@ export const GlobalProvider = ({ children }) => {
 
   const toggleFavorite = async (id) => {
     try {
-      const response = await axios.put(`http://localhost:8080/api/notes/${id}/favorite`);
+
+      const token = localStorage.getItem("token");
+
+      const response = await axios.put(
+        `http://localhost:8080/api/notes/${id}/favorite`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
       const updatedNote = response.data;
   
       const updatedNotes = notes.map((note) =>
@@ -89,11 +99,21 @@ export const GlobalProvider = ({ children }) => {
   };
 
   const handleSaveNote = (noteToSave) => {
+
+    const token = localStorage.getItem("token");
+
     if (noteToSave.noteId) {
       // Note already has ID → Update (PUT)
       console.log("UPDATING.......")
       console.log(noteToSave)
-      axios.put(`http://localhost:8080/api/notes/${noteToSave.noteId}`, noteToSave)
+      axios.put(`http://localhost:8080/api/notes`, 
+        noteToSave,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        })
         .then(response => {
           const updatedNote = response.data;
           setNotes(prevNotes =>
@@ -109,10 +129,20 @@ export const GlobalProvider = ({ children }) => {
       // No ID → New note → Create (POST)
       console.log("CREATING.......")
       console.log(noteToSave)
-      axios.post('http://localhost:8080/api/note', noteToSave)
+      axios.post('http://localhost:8080/api/note', noteToSave,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        })
         .then(response => {
           const newNote = response.data;
-          setNotes(prevNotes => [newNote, ...prevNotes]);
+          setNotes(prevNotes => {
+            const updatedNotes = [newNote, ...prevNotes];
+            updatedNotes.sort((a, b) => b.isFavorite - a.isFavorite);
+            return updatedNotes;
+          });
         })
         .catch(error => {
           console.error('Error creating note:', error);
@@ -122,7 +152,6 @@ export const GlobalProvider = ({ children }) => {
 
   const handleAddNote = () => {
     const newNote = {
-      userId: 1,
       heading: "",
       notes: "",
       images: [],
@@ -133,7 +162,16 @@ export const GlobalProvider = ({ children }) => {
   
   const handleDeleteNote = async (noteId) => {
     try {
-      await axios.delete(`http://localhost:8080/api/notes/${noteId}`);
+
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`http://localhost:8080/api/notes/${noteId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
       setNotes((prevNotes) => prevNotes.filter((note) => note.noteId !== noteId));
     } catch (error) {
       console.error('Error deleting note:', error);
@@ -149,10 +187,8 @@ export const GlobalProvider = ({ children }) => {
   const toggleSelectNote = (noteId) => {
     setSelectedNoteIds((prev) => {
       if (prev.includes(noteId)) {
-        // Deselect the note if it is already selected
         return prev.filter((id) => id !== noteId);
       } else {
-        // Select the note if it is not already selected
         return [...prev, noteId];
       }
     });
@@ -160,7 +196,16 @@ export const GlobalProvider = ({ children }) => {
   
   const handleMultiDelete = async () => {
     try {
-      await axios.post('http://localhost:8080/api/notes/bulk-delete', selectedNoteIds);
+
+      const token = localStorage.getItem("token");
+
+      await axios.post('http://localhost:8080/api/notes/bulk-delete', selectedNoteIds,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
       setNotes((prevNotes) => prevNotes.filter((note) => !selectedNoteIds.includes(note.noteId)));
   
       setSelectedNoteIds([]);
@@ -170,11 +215,17 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
+
   return (
     <GlobalContext.Provider
       value={{
         user,
         setUser,
+        handleLogout,
         selectedNote,
         isModalOpen,
         selectedNoteIds,

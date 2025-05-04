@@ -14,13 +14,9 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error message before submitting the request
-
-    console.log("Email:", email);  // Log email to ensure it's being captured correctly
-    console.log("Password:", password);  // Log password to ensure it's being captured correctly
+    setError(""); 
 
     try {
-      // Sending the request to the backend for login
       const response = await axios.post(
         "http://localhost:8080/api/auth/login",
         { email, password },
@@ -29,19 +25,15 @@ const Login = () => {
 
       console.log("Login response:", response.data);
 
-      const { token, email: responseEmail, username } = response.data; // Destructuring response
+      const { token, email: responseEmail, username } = response.data; 
 
-      // Store the token in local storage for future authentication
       localStorage.setItem("token", token);
-
-      // Set the user in the global context (or state management)
       setUser({ email: responseEmail, username });
 
-      // Navigate to the dashboard upon successful login
       navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
-      setError("Invalid credentials. Please try again.");  // Set error message on failure
+      setError("Invalid credentials. Please try again."); 
     }
   };
 

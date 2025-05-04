@@ -47,10 +47,10 @@ public class AuthController {
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getEmail());
             CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
             final String jwt = jwtUtil.generateToken(
-                    customUserDetails.getUsername(), customUserDetails.getEmail()
+                    customUserDetails.getActualUsername(), customUserDetails.getEmail()
             );
 
-            return ResponseEntity.ok(new AuthResponse(jwt, customUserDetails.getEmail(), customUserDetails.getUsername()));
+            return ResponseEntity.ok(new AuthResponse(jwt, customUserDetails.getEmail(), customUserDetails.getActualUsername()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }

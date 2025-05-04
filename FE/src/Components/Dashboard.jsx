@@ -7,6 +7,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 const Dashboard = () => {
   
   const {
+    handleLogout,
     selectedNote,
     isModalOpen,
     selectedNoteIds,
@@ -43,6 +44,7 @@ const Dashboard = () => {
             />
           </div>
           <button
+            onClick={handleLogout}
             className="bg-red-100 text-red-700 font-semibold px-6 py-1 rounded transition hover:bg-red-200 hover:text-red-800 shadow hover:shadow-md"
           >
             Logout

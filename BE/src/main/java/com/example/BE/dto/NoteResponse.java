@@ -8,7 +8,6 @@ import java.util.List;
 @Data
 public class NoteResponse {
     private Long noteId;
-    private Long userId;
     private String heading;
     private String notes;
     private List<NoteImageResponse> images;

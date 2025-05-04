@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,13 +26,21 @@ public class NoteServiceImpl implements NoteService {
     private final NoteRepository noteRepository;
     private final NoteImageRepository noteImageRepository;
 
-    @Override
-    public NoteResponse createNote(NoteRequest noteRequest) {
-        User user = userRepository.findById(noteRequest.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    private Note findNoteIfOwnedByUser(Long id, User user) throws AccessDeniedException {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Note not found"));
 
+        if (!note.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not authorized to access this note.");
+        }
+        return note;
+    }
+
+    @Override
+    public NoteResponse createNote(NoteRequest noteRequest, User user) {
         Note note = NoteMapper.toEntity(noteRequest, user);
         Note savedNote = noteRepository.save(note);
+
         return NoteMapper.toDto(savedNote);
     }
 
@@ -45,19 +54,18 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteResponse getNoteById(Long id) {
-        Note note = noteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Note not found"));
+    public NoteResponse getNoteById(Long id, User user) throws AccessDeniedException {
+        Note note = findNoteIfOwnedByUser(id, user);
 
         return NoteMapper.toDto(note);
     }
 
     @Override
-    public NoteResponse updateNote(Long id, NoteRequest request) {
-        Note note = noteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Note not found"));
+    public NoteResponse updateNote(NoteRequest request, User user) throws AccessDeniedException {
+        Note note = findNoteIfOwnedByUser(request.getNoteId(), user);
 
         note.setHeading(request.getHeading());
         note.setNotes(request.getNotes());
-
         note.getImages().clear();
 
         if (request.getImages() != null && !request.getImages().isEmpty()) {
@@ -76,13 +84,15 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void deleteNote(Long id) {
+    public void deleteNote(Long id, User user) throws AccessDeniedException {
+        Note note = findNoteIfOwnedByUser(id, user);
+
         noteRepository.deleteById(id);
     }
 
     @Override
-    public NoteResponse toggleFavorite(Long id) {
-        Note note = noteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Note not found"));
+    public NoteResponse toggleFavorite(Long id, User user) throws AccessDeniedException {
+        Note note = findNoteIfOwnedByUser(id, user);
         note.setFavorite(!note.isFavorite());
 
         Note updatedNote = noteRepository.save(note);
@@ -90,11 +100,9 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void deleteImage(Long noteId, Long imageId) {
-        Note note = noteRepository.findById(noteId)
-                .orElseThrow(() -> new EntityNotFoundException("Note not found"));
+    public void deleteImage(Long noteId, String imageId, User user) throws AccessDeniedException {
+        Note note = findNoteIfOwnedByUser(noteId, user);
 
-        // Find the image in the note's images
         NoteImage image = note.getImages().stream()
                 .filter(img -> img.getId().equals(imageId))
                 .findFirst()
@@ -106,12 +114,17 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void deleteMultipleNotes(List<Long> ids) {
+    public void deleteMultipleNotes(List<Long> ids, User user) throws AccessDeniedException {
         List<Note> notes = noteRepository.findAllById(ids);
-        if(notes.isEmpty()) {
-            throw new EntityNotFoundException("Notes not found");
-        }
+
+        if (notes.size() != ids.size())
+            throw new EntityNotFoundException("One or more notes not found.");
+
+        boolean allOwned = notes.stream().allMatch(n -> n.getUser().getId().equals(user.getId()));
+        if (!allOwned)
+            throw new AccessDeniedException("One or more notes do not belong to the user.");
 
         noteRepository.deleteAll(notes);
     }
+
 }

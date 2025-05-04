@@ -23,7 +23,6 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
     if (note) {
       setEditedNote({
         noteId: note.noteId,
-        userId: note.userId,
         heading: note.heading,
         notes: note.notes,
         createdAt: Date.now(),
