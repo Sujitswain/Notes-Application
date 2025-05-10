@@ -17,6 +17,12 @@ export const GlobalProvider = ({ children }) => {
   const [isMultiDeleteMode, setIsMultiDeleteMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const [email, setEmail] = useState(null);  // Registration email (used for OTP verification)
+
+  /**
+   * If the user login in with userName
+   * adn password.
+   */
   useEffect(() => {
     if (!user) return;
 
@@ -36,6 +42,31 @@ export const GlobalProvider = ({ children }) => {
         console.error('Error fetching notes:', error);
       });
   }, [user]);
+
+  /**
+   * User has logged in (token in LS) and if he 
+   * refreshes the page the toke is again send
+   * to be and validated if yes then the dashboard is loaded...
+   */
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token && !user) {
+      axios.get("http://localhost:8080/api/auth/validate", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      })
+      .then(response => {
+        setUser(response.data);
+      })
+      .catch(error => {
+        console.error("Token is invalid or expired:", error);
+        localStorage.removeItem("token");
+        setUser(null);
+      });
+    }
+  }, []);
 
   const filteredNotes = useMemo(() => {
     return searchTerm.trim()
@@ -223,6 +254,8 @@ export const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
+        email, 
+        setEmail,
         user,
         setUser,
         handleLogout,

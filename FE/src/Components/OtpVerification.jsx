@@ -1,6 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useGlobalContext } from "../context/GlobalContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const OtpVerification = () => {
+
+  const { email } = useGlobalContext();
+  const navigate = useNavigate();
+
   const [otp, setOtp] = useState(new Array(5).fill(""));
   const inputRefs = useRef([]);
 
@@ -11,10 +18,9 @@ const OtpVerification = () => {
   const handleChange = (e, index) => {
     let value = e.target.value;
   
-    // Take only the last digit entered (in case user types/pastes multiple digits)
-    value = value.replace(/\D/g, ""); // remove non-digits
+    value = value.replace(/\D/g, ""); 
     if (value.length > 1) {
-      value = value.slice(-1); // take the last character
+      value = value.slice(-1); 
     }
   
     const newOtp = [...otp];
@@ -61,20 +67,39 @@ const OtpVerification = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const enteredOtp = otp.join("");
-    console.log("Verifying OTP:", enteredOtp);
-    // Send `enteredOtp` to backend
+
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/verify-otp",
+      { email, otp: enteredOtp},
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log(response.data);
+    navigate("/login")
   };
 
-  const handleResendOtp = () => {
-    console.log("Resending OTP...");
-    // TODO: Call API to resend OTP here
+  const handleResendOtp = async () => {
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/resend-otp",
+      { email },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log(response.data);
   };  
 
   const handleClick = (e, index) => {
-    // Check if the cursor is before the number, if so, move it to the right
     const value = otp[index];
     const cursorPosition = e.target.selectionStart;
 
@@ -84,7 +109,7 @@ const OtpVerification = () => {
   };
 
   const handleFocus = (e) => {
-    e.target.select(); // Selects the digit, so the new key replaces it
+    e.target.select();
   };
   
 

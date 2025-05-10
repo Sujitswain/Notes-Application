@@ -9,6 +9,7 @@ import OtpVerification from "./Components/OtpVerification";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 import { GlobalProvider } from "./context/GlobalContext";
+import NotFound from "./Components/NotFound";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </BrowserRouter>

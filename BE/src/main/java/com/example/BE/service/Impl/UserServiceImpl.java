@@ -1,8 +1,11 @@
 package com.example.BE.service.Impl;
 
+import com.example.BE.dto.RegisterResponse;
 import com.example.BE.entity.User;
+import com.example.BE.exception.CustomException;
 import com.example.BE.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +25,29 @@ public class UserServiceImpl {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void registerUser(String username, String email, String password) {
+    public RegisterResponse registerUser(String username, String email, String password) {
+
+        Optional<User> existingUser = userRepository.findByEmail(email);
+
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+
+            if (user.isVerified()) {
+                throw new CustomException("Email is already registered and verified.", HttpStatus.CONFLICT.value());
+            }
+            else {
+                user.setUsername(username);
+                user.setPassword(passwordEncoder.encode(password));
+                user.setOtpCode(generateOtp());
+                user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+                userRepository.save(user);
+
+                emailService.sendOtpEmail(email, user.getOtpCode());
+
+                return new RegisterResponse("OTP resent to email", false, true);
+            }
+        }
+
         String encodedPassword = passwordEncoder.encode(password);
 
         String otp = generateOtp();
@@ -35,10 +60,11 @@ public class UserServiceImpl {
         user.setOtpCode(otp);
         user.setOtpExpiry(expiry);
         user.setVerified(false);
-
         userRepository.save(user);
 
         emailService.sendOtpEmail(email, otp);
+
+        return new RegisterResponse("OTP sent to email", true, false);
     }
 
     private String generateOtp() {
@@ -56,5 +82,22 @@ public class UserServiceImpl {
             }
         }
         return false;
+    }
+
+    public void resendOtp(String email) {
+        System.out.println("RESEND Email: " + email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException("Email not found", 404));
+
+        if (user.isVerified()) {
+            throw new CustomException("OTP already verified", 400);
+        }
+
+        String otp = generateOtp();
+        user.setOtpCode(otp);
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+        userRepository.save(user);
+
+        emailService.sendOtpEmail(email, otp);
     }
 }

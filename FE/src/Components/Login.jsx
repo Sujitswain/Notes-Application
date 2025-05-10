@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Google from "../assets/google.png";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
@@ -12,6 +12,30 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const checKToken = async () => {
+      const token = localStorage.getItem("token");
+      if(!token) return;
+
+      try {
+        const res = await axios.get("http://localhost:8080/api/auth/validate", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        const { email, username } = res.data;
+        setUser({ email, username });
+        navigate("/dashboard");
+      } catch(err) {
+        console.log("Token Invalid or Expired")
+        localStorage.removeItem("token");
+      }
+    }
+
+    checKToken();
+  }, [])
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(""); 
@@ -22,8 +46,6 @@ const Login = () => {
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );
-
-      console.log("Login response:", response.data);
 
       const { token, email: responseEmail, username } = response.data; 
 

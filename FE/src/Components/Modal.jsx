@@ -6,6 +6,8 @@ import 'react-quill/dist/quill.snow.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
+import Toast from "./Toast";
+
 const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
 
   const [editedNote, setEditedNote] = useState({ ...note });
@@ -15,9 +17,20 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
   const [bgImage, setBgImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastConfig, setToastConfig] = useState({});
+
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const quillRef = useRef(null);
+
+  useEffect(() => {
+    if (showToast) {
+      setTimeout(() => {
+        setShowToast(false); 
+      }, 2000); 
+    }
+  }, [showToast]);
 
   useEffect(() => {
     if (note) {
@@ -86,6 +99,16 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
 
     setImages((prevImages) => {
       const updatedImages = [...prevImages, newImage];
+      if (updatedImages.length > 7) {
+        setToastConfig({
+          message: "You can only add up to 7 images.",
+          bgColor: "red",
+          textColor: "#fff",
+        });
+        setShowToast(true);
+        return prevImages; 
+      }
+
       setEditedNote((prevNote) => ({
         ...prevNote,
         images: updatedImages,
@@ -112,6 +135,17 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
   };
 
   const handleImageDrop = (acceptedFiles) => {
+
+    if (images.length >= 7) {
+      setToastConfig({
+        message: "You can only add up to 7 images.",
+        bgColor: "red",
+        textColor: "#fff",
+      });
+      setShowToast(true);
+      return;
+    }
+
     const newImages = acceptedFiles.map((file) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -158,6 +192,10 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
       images: updatedImages,
     }));
   };  
+
+  const handleCloseToast = () => {
+    setShowToast(false); 
+  };
 
   const modules = {
     toolbar: [
@@ -208,7 +246,10 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
               </div>
             </div>
           </div>
-
+          
+          {/* Toast Message */}
+          {showToast && <Toast toastConfig={toastConfig} onClose={handleCloseToast} />}
+          
           {/* Right Side */}
           <div className="w-full md:w-1/2 h-[425px] mt-6 min-w-[300px]">
             {!showCanvas ? (
@@ -357,6 +398,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
             ✔️
           </button>
         </div>
+        
       </div>
     </div>
   );
