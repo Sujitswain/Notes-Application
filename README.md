@@ -8,7 +8,7 @@ A powerful and intuitive Notes Application built with **React** on the frontend 
 - **OTP Verification**: One-time password (OTP) sent to the user's email for additional security.
 - **Rich Text Notes**: Add and manage notes with rich text formatting using **React Quill**.
 - **Image Support**: Upload images within your notes and create custom images within the editor.
-- **Responsive UI**: Mobile-friendly and easy-to-use interface with React.
+- **Responsive UI**: Easy-to-use interface with React.
 - **Spring Boot Backend**: Handles JWT authentication, user management, and note storage.
 - **Secure API**: RESTful API to manage users, notes, and authentication.
 
