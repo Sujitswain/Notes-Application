@@ -31,8 +31,6 @@ A powerful and intuitive Notes Application built with **React** on the frontend 
 
 ## Setup Instructions
 
-### Backend (Spring Boot)
-
 1. **Clone the repository:**
 
    ```bash
