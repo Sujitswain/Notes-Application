@@ -75,10 +75,10 @@ public class AuthController {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> verifyOtp(@RequestBody OtpVerificationRequest request) {
-        boolean verified = userService.verifyOtp(request.getEmail(), request.getOtp());
-        if (verified) {
-            return ResponseEntity.ok("OTP verified successfully.");
+    public ResponseEntity<?> verifyOtp(@RequestBody OtpVerificationRequest request) {
+        AuthResponse response = userService.verifyOtp(request.getEmail(), request.getOtp());
+        if (response != null) {
+            return ResponseEntity.ok(response);
         } else {
             throw new CustomException("Invalid or Expired OTP", HttpStatus.BAD_REQUEST.value());
         }

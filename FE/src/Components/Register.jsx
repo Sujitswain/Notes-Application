@@ -3,11 +3,12 @@ import Google from "../assets/google.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useGlobalContext } from "../context/GlobalContext";
+import Toast from "./Toast";
 
 const Register = () => {
 
   const navigate = useNavigate();
-  const { setEmail } = useGlobalContext();
+  const { setEmail, showToast, handleCloseToast, toastConfig, setToastConfig, setShowToast } = useGlobalContext();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -74,6 +75,13 @@ const Register = () => {
   
       console.log("Registration success", response.data);
       navigate("/optVerification");
+
+      setToastConfig({
+        message: "OTP has been send to Email",
+        bgColor: "violet",
+        textColor: "#fff",
+      });
+      setShowToast(true);
     } catch (error) {
       console.error("Registration error", error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -86,10 +94,23 @@ const Register = () => {
     }
   };
 
+  const handleGoogleLogin = async (e) => {
+    setToastConfig({
+      message: "Feature Yet to Implement Please use Demo account / Register Throw email",
+      bgColor: "blue",
+      textColor: "#fff",
+    });
+    setShowToast(true);
+  }
+
   const isPasswordMatch = formData.password === formData.confirmPassword;
 
   return (
     <div className="w-[80%] h-screen flex flex-col items-center justify-center bg-[#dbf7fe]">
+      
+      {/* Toast Message */}
+      {showToast && <Toast toastConfig={toastConfig} onClose={handleCloseToast} />}
+      
       <h1 className="text-center text-[28px] my-5 font-extrabold uppercase tracking-wider">
         Notes
       </h1>
@@ -197,7 +218,7 @@ const Register = () => {
 
           {/* Google Signup and Login Link */}
           <div className="my-10 flex-col">
-            <div className="w-[11rem] flex m-auto justify-center rounded-sm border-2 hover:border-blue-300">
+            <div onClick={handleGoogleLogin} className="w-[11rem] flex m-auto justify-center rounded-sm border-2 hover:border-blue-300">
               <img className="w-8 h-8" src={Google} alt="Google" />
               <span className="bg-blue-500 w-full text-white text-sm rounded-r-sm font-semibold px-1 py-[3px]">
                 Sign up with Google

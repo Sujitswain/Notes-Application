@@ -19,9 +19,20 @@ export const GlobalProvider = ({ children }) => {
 
   const [email, setEmail] = useState(null);  // Registration email (used for OTP verification)
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastConfig, setToastConfig] = useState({});
+
+  useEffect(() => {
+    if (showToast) {
+      setTimeout(() => {
+        setShowToast(false); 
+      }, 2000); 
+    }
+  }, [showToast]);
+
   /**
    * If the user login in with userName
-   * adn password.
+   * and password.
    */
   useEffect(() => {
     if (!user) return;
@@ -34,13 +45,13 @@ export const GlobalProvider = ({ children }) => {
       },
       withCredentials: true
     })
-      .then(response => {
-        const sortedNotes = [...response.data].sort((a, b) => b.isFavorite - a.isFavorite);
-        setNotes(sortedNotes);
-      })
-      .catch(error => {
-        console.error('Error fetching notes:', error);
-      });
+    .then(response => {
+      const sortedNotes = [...response.data].sort((a, b) => b.isFavorite - a.isFavorite);
+      setNotes(sortedNotes);
+    })
+    .catch(error => {
+      console.error('Error fetching notes:', error);
+    });
   }, [user]);
 
   /**
@@ -123,6 +134,14 @@ export const GlobalProvider = ({ children }) => {
       );
       updatedNotes.sort((a, b) => b.isFavorite - a.isFavorite);
       setNotes(updatedNotes);
+
+      setToastConfig({
+        message: `${updatedNote.isFavorite ? "Like" : "Not Like"} ${updatedNote.heading} ${updatedNote.isFavorite ? "🩷" : "🫤"}`,
+        bgColor: "green",
+        textColor: "#fff",
+      });
+      setShowToast(true);
+
     } catch (error) {
       console.error('Error toggling favorite:', error);
       alert('Failed to toggle favorite status. Please try again.');
@@ -152,6 +171,14 @@ export const GlobalProvider = ({ children }) => {
               note.noteId === updatedNote.noteId ? updatedNote : note
             )
           );
+          
+          setToastConfig({
+            message: `${noteToSave.heading} have been updated.`,
+            bgColor: "blue",
+            textColor: "#fff",
+          });
+          setShowToast(true);
+
         })
         .catch(error => {
           console.error('Error updating note:', error);
@@ -174,6 +201,14 @@ export const GlobalProvider = ({ children }) => {
             updatedNotes.sort((a, b) => b.isFavorite - a.isFavorite);
             return updatedNotes;
           });
+
+          setToastConfig({
+            message: `${noteToSave.heading} have been created.`,
+            bgColor: "green",
+            textColor: "#fff",
+          });
+          setShowToast(true);
+
         })
         .catch(error => {
           console.error('Error creating note:', error);
@@ -196,14 +231,23 @@ export const GlobalProvider = ({ children }) => {
 
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://localhost:8080/api/notes/${noteId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        });
+      await axios.delete(`http://localhost:8080/api/notes/${noteId}`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+
+      const deletedNote = notes.find((note) => note.noteId === noteId);
       setNotes((prevNotes) => prevNotes.filter((note) => note.noteId !== noteId));
+
+      setToastConfig({
+        message: `${deletedNote.heading} have been deleted.`,
+        bgColor: "red",
+        textColor: "#fff",
+      });
+      setShowToast(true);
+
     } catch (error) {
       console.error('Error deleting note:', error);
       alert('Failed to delete the note. Please try again.');
@@ -241,6 +285,14 @@ export const GlobalProvider = ({ children }) => {
   
       setSelectedNoteIds([]);
       setIsMultiDeleteMode(false);
+
+      setToastConfig({
+        message: `${selectedNoteIds.length} notes have been deleted.`,
+        bgColor: "red",
+        textColor: "#fff",
+      });
+      setShowToast(true);
+
     } catch (error) {
       console.error('Error deleting notes:', error);
     }
@@ -249,11 +301,29 @@ export const GlobalProvider = ({ children }) => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
+
+    setToastConfig({
+      message: "You have Sucessfully logged out..",
+      bgColor: "green",
+      textColor: "#fff",
+    });
+    setShowToast(true);
+
+  };
+
+  const handleCloseToast = () => {
+    setShowToast(false); 
   };
 
   return (
     <GlobalContext.Provider
       value={{
+        notes,
+        showToast, 
+        setShowToast,
+        toastConfig, 
+        setToastConfig,
+        handleCloseToast,
         email, 
         setEmail,
         user,

@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
 import NoteBlock from './NoteBlock';
 import Modal from './Modal';
+import Toast from "./Toast";
+
 import { useGlobalContext } from '../context/GlobalContext';
 
 
 const Dashboard = () => {
   
   const {
+    notes,
+    user,
     handleLogout,
     selectedNote,
     isModalOpen,
@@ -24,17 +28,23 @@ const Dashboard = () => {
     toggleMultiDeleteMode,
     toggleSelectNote,
     handleMultiDelete,
-    setSearchTerm
+    setSearchTerm,
+    showToast,
+    toastConfig,
+    handleCloseToast
   } = useGlobalContext();
   
   return (
     <div className="w-full min-h-screen flex justify-center bg-gray-100">
       <div className="w-full max-w-[1200px] min-w-[320px] flex flex-col bg-white shadow-xl border border-gray-300">
         
+        {/* Toast Message */}
+        {showToast && <Toast toastConfig={toastConfig} onClose={handleCloseToast} />}
+
         {/* Top Bar */}
         <div className="h-[64px] px-4 flex items-center justify-between border-b border-gray-300 bg-white sticky top-0 z-10">
           <div className="flex items-center gap-3 w-full max-w-[70%]">
-            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold text-lg border-2 border-gray-500">T</div>
+            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold text-lg border-2 border-gray-500">{(user?.username[0]+"").toUpperCase()}</div>
             <input
               type="text"
               placeholder="Search Notes"
@@ -54,7 +64,7 @@ const Dashboard = () => {
         {/* Greeting and Add Note Button */}
         <div className="px-4 py-4 flex justify-between items-start sm:items-center">
           <p className="text-2xl font-bold text-blue-600">
-            Hey, <span className="text-black">Test</span>
+            Hey, <span className="text-black">{(user?.username[0]+"").toUpperCase()}{(user?.username+"").slice(1, (user?.username+"").length)}</span>
           </p>
           <div className="flex items-center gap-3">
             {isMultiDeleteMode ? (
@@ -100,21 +110,43 @@ const Dashboard = () => {
         </div>
 
         <div className="flex flex-wrap justify-center py-1 gap-2 px-4 pb-4 overflow-y-auto h-[calc(100vh-128px)] scrollbar-hide cursor-pointer">
-          {filteredNotes.map((item) => (
-            <NoteBlock
-              key={item.noteId}
-              heading={highlightText(item.heading, searchTerm)}
-              notes={item.notes}
-              createdAt={item.createdAt}
-              onClick={() => openModal(item)}
-              showCheckbox={isMultiDeleteMode}
-              isSelected={selectedNoteIds.includes(item.noteId)}
-              onSelect={() => toggleSelectNote(item.noteId)}
-              onToggleFavorite={() => toggleFavorite(item.noteId)}
-              isFavorite={item.isFavorite}
-            />
-          ))}
+          {notes.length > 0 ? (
+            filteredNotes.map((item) => (
+              <NoteBlock
+                key={item.noteId}
+                heading={highlightText(item.heading, searchTerm)}
+                notes={item.notes}
+                createdAt={item.createdAt}
+                onClick={() => openModal(item)}
+                showCheckbox={isMultiDeleteMode}
+                isSelected={selectedNoteIds.includes(item.noteId)}
+                onSelect={() => toggleSelectNote(item.noteId)}
+                onToggleFavorite={() => toggleFavorite(item.noteId)}
+                isFavorite={item.isFavorite}
+              />
+            ))
+          ) : (
+            <div className="w-full flex flex-col items-center justify-center bg-gray-50 text-gray-600 rounded-2xl p-8 mt-12 shadow-inner border border-dashed border-gray-300 transition-all duration-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-20 w-20 text-violet-400 mb-4 animate-bounce"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12h6m-6 4h3m2 4H5a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"
+                />
+              </svg>
+              <p className="text-2xl font-medium">Start your first note</p>
+              <p onClick={handleAddNote} className="text-sm text-gray-400 mt-1">Click here</p>
+            </div>
+          )}
         </div>
+
       </div>
       
       {isModalOpen && (

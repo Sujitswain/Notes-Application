@@ -1,9 +1,11 @@
 package com.example.BE.service.Impl;
 
+import com.example.BE.dto.AuthResponse;
 import com.example.BE.dto.RegisterResponse;
 import com.example.BE.entity.User;
 import com.example.BE.exception.CustomException;
 import com.example.BE.repository.UserRepository;
+import com.example.BE.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,9 @@ public class UserServiceImpl {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     public RegisterResponse registerUser(String username, String email, String password) {
 
@@ -71,17 +76,18 @@ public class UserServiceImpl {
         return String.valueOf(new Random().nextInt(90000) + 10000);
     }
 
-    public boolean verifyOtp(String email, String otp) {
+    public AuthResponse verifyOtp(String email, String otp) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getOtpCode().equals(otp) && LocalDateTime.now().isBefore(user.getOtpExpiry())) {
                 user.setVerified(true);
                 userRepository.save(user);
-                return true;
+                String token = jwtUtil.generateToken(user.getUsername(), user.getEmail());
+                return new AuthResponse(token, user.getEmail(), user.getUsername());
             }
         }
-        return false;
+        return null;
     }
 
     public void resendOtp(String email) {

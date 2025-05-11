@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Toast from "./Toast";
 
 const OtpVerification = () => {
 
-  const { email } = useGlobalContext();
+  const { email, setUser, showToast, handleCloseToast, toastConfig, setToastConfig, setShowToast } = useGlobalContext();
   const navigate = useNavigate();
 
   const [otp, setOtp] = useState(new Array(5).fill(""));
@@ -81,8 +82,19 @@ const OtpVerification = () => {
       }
     );
 
-    console.log(response.data);
-    navigate("/login")
+    const { token, email: responseEmail, username } = response.data; 
+
+    localStorage.setItem("token", token);
+    setUser({ email: responseEmail, username });
+
+    navigate("/dashboard");
+
+    setToastConfig({
+      message: "OTP have been verified successfully",
+      bgColor: "green",
+      textColor: "#fff",
+    });
+    setShowToast(true);
   };
 
   const handleResendOtp = async () => {
@@ -97,6 +109,13 @@ const OtpVerification = () => {
     );
 
     console.log(response.data);
+    setToastConfig({
+      message: "OTP have been resend to Email",
+      bgColor: "black",
+      textColor: "#fff",
+    });
+    setShowToast(true);
+
   };  
 
   const handleClick = (e, index) => {
@@ -115,6 +134,10 @@ const OtpVerification = () => {
 
   return (
     <div className="w-[80%] h-screen flex flex-col items-center justify-center bg-[#dbf7fe]">
+
+      {/* Toast Message */}
+      {showToast && <Toast toastConfig={toastConfig} onClose={handleCloseToast} />}
+
       <h1 className="text-center text-[28px] my-5 font-extrabold uppercase tracking-wider">
         Notes
       </h1>

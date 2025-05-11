@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Google from "../assets/google.png";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
 import axios from "axios";
+import Toast from "./Toast";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUser } = useGlobalContext();
+  const { setUser, showToast, handleCloseToast, toastConfig, setToastConfig, setShowToast } = useGlobalContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,16 +52,36 @@ const Login = () => {
 
       localStorage.setItem("token", token);
       setUser({ email: responseEmail, username });
-
       navigate("/dashboard");
+
+      setToastConfig({
+        message: "You have Sucessfully logged in..",
+        bgColor: "blue",
+        textColor: "#fff",
+      });
+      setShowToast(true);
+
     } catch (err) {
       console.error("Login error:", err);
       setError("Invalid credentials. Please try again."); 
     }
   };
 
+  const handleGoogleLogin = async (e) => {
+    setToastConfig({
+      message: "Feature Yet to Implement Please use Demo account / Register",
+      bgColor: "blue",
+      textColor: "#fff",
+    });
+    setShowToast(true);
+  }
+
   return (
     <div className="w-[80%] h-screen flex flex-col items-center justify-center bg-[#dbf7fe]">
+
+      {/* Toast Message */}
+      {showToast && <Toast toastConfig={toastConfig} onClose={handleCloseToast} />}
+
       <h1 className="text-center text-[28px] my-5 font-extrabold uppercase tracking-wider">
         Notes
       </h1>
@@ -75,10 +96,10 @@ const Login = () => {
             <p className="font-bold">Demo Account</p>
             <div className="flex">
               <span className="mr-4">
-                <b>Email:</b> test@gmail.com
+                <b>Email:</b> testuser@gmail.com	
               </span>
               <span>
-                <b>Pass:</b> test123
+                <b>Pass:</b> Sujit@543
               </span>
             </div>
           </div>
@@ -111,7 +132,7 @@ const Login = () => {
           </button>
 
           <div className="my-10 flex-col">
-            <div className="w-[11rem] flex m-auto justify-center rounded-sm border-2 hover:border-blue-300">
+            <div onClick={handleGoogleLogin} className="w-[11rem] flex m-auto justify-center rounded-sm border-2 hover:border-blue-300">
               <img className="w-8 h-8" src={Google} alt="Google login" />
               <span className="bg-blue-500 w-full text-white text-sm rounded-r-sm font-semibold px-1 py-[3px]">
                 Sign in with Google

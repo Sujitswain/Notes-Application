@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./BE
+    ports:
+      - "8080:8080"
+    container_name: notes-backend
+
+  frontend:
+    build: ./FE
+    ports:
+      - "3000:80"
+    container_name: notes-frontend
+    depends_on:
+      - backend

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill';
 import Dropzone from 'react-dropzone';
 import Slider from 'react-slick';
@@ -6,9 +6,11 @@ import 'react-quill/dist/quill.snow.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import Toast from "./Toast";
+import { useGlobalContext } from '../context/GlobalContext';
 
 const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
+
+  const {setShowToast, setToastConfig } = useGlobalContext();
 
   const [editedNote, setEditedNote] = useState({ ...note });
   const [images, setImages] = useState(note.images || []);
@@ -17,20 +19,9 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
   const [bgImage, setBgImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const [showToast, setShowToast] = useState(false);
-  const [toastConfig, setToastConfig] = useState({});
-
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const quillRef = useRef(null);
-
-  useEffect(() => {
-    if (showToast) {
-      setTimeout(() => {
-        setShowToast(false); 
-      }, 2000); 
-    }
-  }, [showToast]);
 
   useEffect(() => {
     if (note) {
@@ -97,24 +88,23 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
       base64: dataUrl,
     };
 
-    setImages((prevImages) => {
-      const updatedImages = [...prevImages, newImage];
-      if (updatedImages.length > 7) {
-        setToastConfig({
-          message: "You can only add up to 7 images.",
-          bgColor: "red",
-          textColor: "#fff",
-        });
-        setShowToast(true);
-        return prevImages; 
-      }
+    const newImages = [...images, newImage];
+    if (newImages.length > 7) {
+      setToastConfig({
+        message: "You can only add up to 7 images.",
+        bgColor: "red",
+        textColor: "#fff",
+      });
+      setShowToast(true);
+      return;
+    }
 
-      setEditedNote((prevNote) => ({
-        ...prevNote,
-        images: updatedImages,
-      }));
-      return updatedImages;
-    });    
+    setImages(newImages);
+    setEditedNote((prevNote) => ({
+      ...prevNote,
+      images: newImages,
+    }));
+      
     setShowCanvas(false);
     setBgImage(null);
   };
@@ -125,6 +115,18 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
   };
 
   const handleSave = () => {
+
+  if (!editedNote.heading || editedNote.heading.trim() === '') {
+    
+    setToastConfig({
+      message: 'Add a Heading to a Note',
+      bgColor: "orange",
+      textColor: "#fff",
+    });
+    setShowToast(true);
+    return;
+  }
+
     onSave(editedNote);
     onClose();
   };
@@ -136,6 +138,8 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
 
   const handleImageDrop = (acceptedFiles) => {
 
+    if (!acceptedFiles || acceptedFiles.length === 0) return;
+
     if (images.length >= 7) {
       setToastConfig({
         message: "You can only add up to 7 images.",
@@ -146,7 +150,10 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
       return;
     }
 
-    const newImages = acceptedFiles.map((file) => {
+    const maxRemaining = 7 - images.length;
+    const limitedFiles = acceptedFiles.slice(0, maxRemaining);
+
+    const newImages = limitedFiles.map((file) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       return new Promise((resolve) => {
@@ -193,20 +200,56 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
     }));
   };  
 
-  const handleCloseToast = () => {
-    setShowToast(false); 
-  };
+  const handleImageUpload = (quill) => {
+  const editor = quill.root;
+  const existingImages = editor.querySelectorAll('img');
+  if (existingImages.length >= 3) {
+    
+    setToastConfig({
+      message: `You are allowed to add only 3 images. To add more images use right section`,
+      bgColor: "red",
+      textColor: "#fff",
+    });
+    setShowToast(true);
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ['bold', 'italic', 'underline'],
-      ['image', 'code-block'],
-    ],
-    clipboard: {
-      matchVisual: false,
-    },
+    return;
+  }
+
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'image/*');
+  input.click();
+
+  input.onchange = () => {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64ImageSrc = e.target.result;
+        const range = quill.getSelection(true);
+        quill.insertEmbed(range.index, 'image', base64ImageSrc);
+        quill.setSelection(range.index + 1);
+      };
+      reader.readAsDataURL(file);
+    }
   };
+};
+
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ header: [1, 2, false] }],
+        ['bold', 'italic', 'underline'],
+        ['image', 'code-block'],
+      ],
+      handlers: {
+        image: function () {
+          const quill = this.quill;
+          handleImageUpload(quill);
+        },
+      },
+    },
+  }), []);
 
   if (!isOpen) return null;
 
@@ -222,6 +265,7 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
               <label className="block text-sm font-semibold mb-1">Heading</label>
               <input
                 type="text"
+                required
                 className="w-full border border-gray-300 px-4 py-2 rounded-md"
                 value={editedNote.heading}
                 onChange={(e) =>
@@ -246,9 +290,6 @@ const Modal = ({ isOpen, onClose, note, onSave, onDelete }) => {
               </div>
             </div>
           </div>
-          
-          {/* Toast Message */}
-          {showToast && <Toast toastConfig={toastConfig} onClose={handleCloseToast} />}
           
           {/* Right Side */}
           <div className="w-full md:w-1/2 h-[425px] mt-6 min-w-[300px]">
