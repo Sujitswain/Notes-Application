@@ -1,33 +1,40 @@
-# Notes-Application
+# Notes Application
 
-    1. FOR FE
+A powerful and intuitive Notes Application built with **React** on the frontend and **Spring Boot** on the backend. The application uses **JWT authentication** for secure user access, **OTP verification** for user registration/login, and **React Quill** for rich text note-taking with image support and custom image creation.
 
-        Install Vite + React
+## Features
 
-            npm create vite@latest my-app --template react
-            cd my-app
-            npm install
+- **User Authentication**: Secure login and registration with JWT token-based authentication.
+- **OTP Verification**: One-time password (OTP) sent to the user's email for additional security.
+- **Rich Text Notes**: Add and manage notes with rich text formatting using **React Quill**.
+- **Image Support**: Upload images within your notes and create custom images within the editor.
+- **Responsive UI**: Mobile-friendly and easy-to-use interface with React.
+- **Spring Boot Backend**: Handles JWT authentication, user management, and note storage.
+- **Secure API**: RESTful API to manage users, notes, and authentication.
 
-        Install Tailwind CSS
+## Technologies Used
 
-            npm install -D tailwindcss postcss autoprefixer
-            npx tailwindcss init -p
+- **Frontend**: React, React Quill, Axios
+- **Backend**: Spring Boot, Spring Security, JWT, Spring Data JPA, MySQL
+- **Authentication**: JWT (JSON Web Tokens)
+- **Database**: MySQL
+- **OTP**: Email-based OTP using JavaMail
+- **Image Management**: React Quill with image support, custom image creation
 
-        Configure tailwind.config.js
-            
-            content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"]
+## Prerequisites
 
-        Update index.css
+- Java 17 or later
+- Node.js 16.x or later
+- H2 / MySQL
+- Maven
+- npm for frontend dependencies
 
-            @tailwind base;
-            @tailwind components;
-            @tailwind utilities;
+## Setup Instructions
 
-        Start your app
+### Backend (Spring Boot)
 
-            npm run dev
+1. **Clone the repository:**
 
-
-    2. FOR BE
-
-        
+   ```bash
+   https://github.com/Sujitswain/Notes-Application.git
+   cd Notes-Application
