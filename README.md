@@ -36,3 +36,9 @@ A powerful and intuitive Notes Application built with **React** on the frontend 
    ```bash
    https://github.com/Sujitswain/Notes-Application.git
    cd Notes-Application
+
+
+https://github.com/user-attachments/assets/6ab7d082-e914-402b-8556-a4596c2b3b7b
+
+
+   
